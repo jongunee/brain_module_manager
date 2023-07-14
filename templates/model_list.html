@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Saved Model List</title>
+  </head>
+  <body>
+    <h1>Saved Model List</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>No.</th>
+          <th>Model Name</th>
+          <th>Tag Name</th>
+          <th>Framework</th>
+          <th>Input Type</th>
+          <th>Output Type</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for model_info in saved_models %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td>{{ model_info[0] }}</td>
+          <td>{{ model_info[1] }}</td>
+          <td>
+            <input type="text" value="{{ model_info[2] }}" />
+          </td>
+          <td>
+            <input type="text" value="{{ model_info[3] }}" />
+          </td>
+          <td>
+            <input type="text" value="{{ model_info[4] }}" />
+          </td>
+          <td>
+            <button>Run</button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </body>
+</html>
