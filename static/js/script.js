@@ -3,10 +3,10 @@ $(document).ready(function () {
     event.preventDefault();
 
     const config = {
-      framework: $(this).closest("tr").find(".input-framework").val(),
-      model_name: $(this).closest("tr").find(".input-model-name").val(),
-      input_type: $(this).closest("tr").find(".input-input-type").val(),
-      output_type: $(this).closest("tr").find(".input-output-type").val(),
+      framework: $(this).closest("tr").find(".framework").val(),
+      model_name: $(this).closest("tr").find(".model-name").val(),
+      input_type: $(this).closest("tr").find(".input-type").val(),
+      output_type: $(this).closest("tr").find(".output-type").val(),
     };
 
     console.log("Sending config_data:", config);
@@ -16,12 +16,12 @@ $(document).ready(function () {
       type: "POST",
       contentType: "application/json",
       data: JSON.stringify(config),
-      success: function (response) {
-        alert("Service started.");
-      },
-      error: function (error) {
+    })
+      .done(function (response) {
+        alert("Service started!");
+      })
+      .fail(function (error) {
         alert("Error: " + error);
-      },
-    });
+      });
   });
 });
