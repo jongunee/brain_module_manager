@@ -2,6 +2,7 @@
 <html>
   <head>
     <title>Saved Model List</title>
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
   </head>
   <body>
     <h1>Saved Model List</h1>
@@ -24,20 +25,42 @@
           <td>{{ model_info[0] }}</td>
           <td>{{ model_info[1] }}</td>
           <td>
-            <input type="text" value="{{ model_info[2] }}" />
+            <input
+              type="text"
+              name="framework"
+              class="input-framework"
+              placeholder="Framework"
+            />
           </td>
           <td>
-            <input type="text" value="{{ model_info[3] }}" />
+            <input
+              type="text"
+              name="input_type"
+              class="input-input-type"
+              placeholder="Input type"
+            />
           </td>
           <td>
-            <input type="text" value="{{ model_info[4] }}" />
+            <input
+              type="text"
+              name="output_type"
+              class="input-output-type"
+              placeholder="Output type"
+            />
           </td>
+          <input
+            type="hidden"
+            name="model_name"
+            class="input-model-name"
+            value="{{ model_info[0] }}:{{ model_info[1] }}"
+          />
           <td>
-            <button>Run</button>
+            <button type="button" class="run-button">Run</button>
           </td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
+    <script type=text/javascript src="{{ url_for('static', filename='js/script.js') }}"></script>
   </body>
 </html>
