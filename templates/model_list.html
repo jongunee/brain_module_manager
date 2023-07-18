@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <title>Saved Model List</title>
     <script src="http://code.jquery.com/jquery-latest.min.js"></script>
   </head>
   <body>
     <h1>Saved Model List</h1>
+    <a href="{{url_for('models')}}">Saved Model List</a>
+    <a href="{{url_for('servers')}}">Activated Server List</a>
     <p>Supported types</p>
     <ul>
       <li>Framework: Scikit-learn, Keras, Pytorch, Tensorflow</li>
@@ -68,6 +70,6 @@
         {% endfor %}
       </tbody>
     </table>
-    <script type=text/javascript src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script type=text/javascript src="{{ url_for('static', filename='js/model_list.js') }}"></script>
   </body>
 </html>

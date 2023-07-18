@@ -1,5 +1,6 @@
 $(document).ready(function () {
   $(".run-button").click(function (event) {
+    //새로 고침 방지
     event.preventDefault();
 
     const config = {
@@ -18,10 +19,10 @@ $(document).ready(function () {
       data: JSON.stringify(config),
     })
       .done(function (response) {
-        alert("Service started!");
+        console.log("Service started!");
       })
       .fail(function (error) {
-        alert("Error: " + error);
+        console.log("Error: " + error);
       });
   });
 });

@@ -103,8 +103,9 @@ def predict(input_data):
 
   return response
 
-
 # 입력 데이터 프레임 생성 함수
+
+
 def create_input_dataframe(input_data, input_type_str):
   if input_type == 'JSON' or input_type == 'PandasSeries':
     return pd.DataFrame([input_data])

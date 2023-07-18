@@ -29,6 +29,8 @@ saved_models = get_saved_models(base_models_dir)
 
 # 현재 사용가능한 포트를 찾아 사용가능한 랜덤 포트 찾기
 
+server_info = {}
+
 
 def find_available_port(start_port, end_port):
   while True:
@@ -39,26 +41,37 @@ def find_available_port(start_port, end_port):
         return trial_port
 
 
+@app.route('/')
+def home():
+  return render_template('index.html')
+
+
 @app.route('/models')
-def list_models():
+def models():
   return render_template('model_list.html', saved_models=saved_models)
+
+
+@app.route('/servers')
+def servers():
+  return render_template('server_list.html', server_info=server_info)
 
 
 @app.route('/service', methods=['POST'])
 def service():
-  service_name = 'service'
+  serve_file = 'service'
   port = find_available_port(2000, 3000)
+  ip = '127.0.0.1'
 
   # body에 포함된 데이터를 'config_data'로 받기
   config_data = request.json
-  print("Received config_data:", config_data)
+  # print("Received config_data:", config_data)
 
   # 임시 파일 생성
   config_file = tempfile.NamedTemporaryFile(delete=False)
   config_file.write(json.dumps(config_data).encode('utf-8'))
   config_file.close()
 
-  cmd = f"bentoml serve {service_name}:svc --host 0.0.0.0 --port {port} --reload"
+  cmd = f"bentoml serve {serve_file}:svc --host {ip} --port {port} --reload"
 
   # 서브 프로세스를 실행해서 환경변수로 전달
   with tempfile.NamedTemporaryFile(delete=False) as config_file:
@@ -69,7 +82,21 @@ def service():
     env_vars["CONFIG_PATH"] = config_filepath
     subprocess.Popen(cmd.split(), env=env_vars)
 
-  return f"Started service: {service_name} on port {port}"
+  model_name = config_data['model_name']
+
+  if model_name not in server_info:
+    server_info[model_name] = []
+
+  server_info[model_name].append(
+      {'config_data': config_data, 'ip': ip, 'port': port})
+  print(server_info)
+
+  return f"Started service: {serve_file} on port {port}"
+
+
+@app.route('/info', methods=['GET'])
+def info():
+  return server_info
 
 
 if __name__ == '__main__':

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Server List</title>
+  </head>
+  <body>
+    <h1>Server List</h1>
+    {% for model_name, config_list in server_info.items() %}
+    <h3>{{model_name}}</h3>
+    <table>
+      <tr>
+        <th>Framework</th>
+        <th>Input Type</th>
+        <th>Output Type</th>
+        <th>URL</th>
+      </tr>
+      {% for server_config in config_list %}
+      <tr>
+        <td>{{ server_config.config_data.framework }}</td>
+        <td>{{ server_config.config_data.input_type }}</td>
+        <td>{{ server_config.config_data.output_type }}</td>
+        <td>http://{{ server_config.ip }}:{{ server_config.port }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+    {% endfor %}
+  </body>
+</html>
