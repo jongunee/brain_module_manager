@@ -7,6 +7,8 @@
   </head>
   <body>
     <h1>Server List</h1>
+    <a href="{{url_for('models')}}">Saved Model List</a>
+    <a href="{{url_for('servers')}}">Activated Server List</a>
     {% for model_name, config_list in server_info.items() %}
     <h3>{{model_name}}</h3>
     <table>
