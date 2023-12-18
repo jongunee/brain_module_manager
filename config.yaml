@@ -1,0 +1,7 @@
+# 지원 프레임워크: 'sklearn', 'keras', 'pytorch', 'tensorflow'
+framework: tensorflow
+# 모델명
+model_name: iris_clf:latest
+# 지원 타입: NumpyNdarray, PandasDataFrame, PandasSeries
+input_type: NumpyNdarray
+output_type: NumpyNdarray

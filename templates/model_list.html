@@ -6,13 +6,14 @@
   </head>
   <body>
     <h1>Saved Model List</h1>
+    <a href="{{url_for('files')}}">Saved Model File List</a>
     <a href="{{url_for('models')}}">Saved Model List</a>
     <a href="{{url_for('servers')}}">Activated Server List</a>
     <p>Supported types</p>
     <ul>
       <li>Framework: Scikit-learn, Keras, Pytorch, Tensorflow</li>
-      <li>Input: NumpyNdarray, PandasDataFrame, PandasSeries</li>
-      <li>Output: NumpyNdarray, PandasDataFrame, PandasSeries</li>
+      <li>Input: NumpyNdarray, PandasDataFrame, PandasSeries, JSON</li>
+      <li>Output: NumpyNdarray, PandasDataFrame, PandasSeries, JSON</li>
     </ul>
     <table>
       <thead>

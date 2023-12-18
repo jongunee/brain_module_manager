@@ -14,7 +14,7 @@ import torch
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
-# conig 파일 로드
+# config 파일 로드
 config_filepath = os.environ.get('CONFIG_PATH')
 
 if config_filepath:
@@ -56,11 +56,11 @@ else:
 if framework == 'sklearn':
   model_runner = bentoml.sklearn.get(model_name).to_runner()
 elif framework == 'keras':
-  model_runner = load_model(model_name)
+  model_runner = bentoml.keras.get(model_name).to_runner()
 elif framework == 'pytorch':
-  model_runner = torch.load(model_name)
+  model_runner = bentoml.pytorch.get(model_name).to_runner()
 elif framework == 'tensorflow':
-  model_runner = tf.saved_model.load(model_name)
+  model_runner = bentoml.tensorflow.get(model_name).to_runner()
 else:
   raise NotImplementedError(f"Unsupported framework: '{framework}'")
 # BentoML service 생성

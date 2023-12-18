@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Saved Model File List</title>
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+  </head>
+  <body>
+    <h1>Saved Model File List</h1>
+    <a href="{{url_for('files')}}">Saved Model File List</a>
+    <a href="{{url_for('models')}}">Saved Model List</a>
+    <a href="{{url_for('servers')}}">Activated Server List</a>
+    <p>Supported Framework: Scikit-learn, Keras, Pytorch, Tensorflow</p>
+    <p>Save Models</p>
+    <select class="file-framework" id="file_framework" name="file_framework" required>
+      <option value="" disabled selected>Framework</option>
+      <option value="sklearn">Scikit-learn</option>
+      <option value="keras">Keras</option>
+      <option value="pytorch">Pytorch</option>
+      <option value="tensorflow">Tensorflow</option>
+    </select>
+    <select class="extension" id="extension" name="extension" required>
+      <option value="" disabled selected>Extension</option>
+      <option value=".pkl">.pkl</option>
+      <option value="saved_model">saved_model</option>
+      <option value=".h5">.h5</option>
+      <option value=".pt">.pt</option>
+      <option value=".pth">.pth</option>
+    </select>
+    <select class="input-type" id="input_type" name="input_type" required>
+      <option value="" disabled selected>Input type</option>
+      <option value="NumpyNdarray">NumpyNdarray</option>
+      <option value="PandasDataFrame">PandasDataFrame</option>
+      <option value="PandasSeries">PandasSeries</option>
+      <option value="JSON">JSON</option>
+    </select>
+    <select class="output-type" id="output_type" name="output_type" required>
+      <option value="" disabled selected>Output type</option>
+      <option value="NumpyNdarray">NumpyNdarray</option>
+      <option value="PandasDataFrame">PandasDataFrame</option>
+      <option value="PandasSeries">PandasSeries</option>
+      <option value="JSON">JSON</option>
+    </select>
+    <form id="upload-form" enctype="multipart/form-data">
+      <input type="file" name="file" required>
+      <button type="submit" id="upload-btn">Save</button>
+    </form>
+    <div id="message"></div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>No.</th>
+          <th>File Name</th>
+          <th>Framework</th>
+          <th>Extension</th>
+          <th>Input Type</th>
+          <th>Output Type</th>
+          <th>Uploaded Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for file_info in saved_files %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td>{{ file_info.model_name }}</td>
+          <td>{{ file_info.framework }}</td>
+          <td>{{ file_info.extension }}</td>
+          <td>{{ file_info.input_type }}</td>
+          <td>{{ file_info.output_type }}</td>
+          <td>{{ file_info.uploaded_date }}</td>
+          <td><button class="create-model-btn" data-model-name="{{ file_info.model_name }}" data-framework="{{ file_info.framework }}" data-extension="{{ file_info.extension }}">모델 생성</button></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <script type=text/javascript src="{{ url_for('static', filename='js/save_file.js') }}"></script>
+    <script type=text/javascript src="{{ url_for('static', filename='js/create_model.js') }}"></script>
+  </body>
+</html>
