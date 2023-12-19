@@ -6,3 +6,5 @@ model_name: iris_clf:latest
 input_type: NumpyNdarray
 output_type: NumpyNdarray
 base_models_dir: C:\Users\whsrj\bentoml\models
+base_files_dir: models
+metadata_file: metadata.json
