@@ -9,6 +9,7 @@ from config import load_meta_data
 metadata_file = load_meta_data()
 
 
+# 사용가능한 포트번호 탐색
 def find_available_port(start_port, end_port):
     while True:
         trial_port = random.randint(start_port, end_port)
@@ -18,6 +19,7 @@ def find_available_port(start_port, end_port):
                 return trial_port
 
 
+# metadata.json 파일에 메타 정보 저장 및 업데이트
 def update_metadata(filename, framework, extension, input_type, output_type):
     if not os.path.exists(metadata_file):
         data = {}
@@ -39,6 +41,7 @@ def update_metadata(filename, framework, extension, input_type, output_type):
         json.dump(data, f, indent=2)
 
 
+# metadata.json 파일 메타 정보 읽어오기
 def read_metadata():
     if not os.path.exists(metadata_file):
         return []
@@ -62,8 +65,6 @@ def read_metadata():
 
 
 # 저장된 학습 모델 리스트 찾기
-
-
 def get_saved_models(base_models_dir):
     all_model_info = []
     for model_name in os.listdir(base_models_dir):

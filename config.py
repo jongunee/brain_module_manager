@@ -7,8 +7,8 @@ def load_config():
         with open(config_file, "r", encoding="utf-8") as f:
             config = yaml.safe_load(f)
 
-    base_files_dir = config["base_files_dir"]
-    base_models_dir = config["base_models_dir"]
+    base_files_dir = config["paths"]["base_files_dir"]
+    base_models_dir = config["paths"]["base_models_dir"]
     server_info = {}
 
     return base_files_dir, base_models_dir, server_info
@@ -20,6 +20,6 @@ def load_meta_data():
         with open(config_file, "r", encoding="utf-8") as f:
             config = yaml.safe_load(f)
 
-    metadata_file = config["metadata_file"]
+    metadata_file = config["paths"]["metadata_file"]
 
     return metadata_file
