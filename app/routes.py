@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, render_template
+from flask import Blueprint, request, jsonify, render_template, current_app
 from werkzeug.utils import secure_filename
 from config import load_config
 from .bentoize import save_with_bento
@@ -138,3 +138,23 @@ def service():
 @bp.route("/info", methods=["GET"])
 def info():
     return server_info
+
+
+@bp.route("/write", methods=["GET", "POST"])
+def board_write():
+    if request.method == "POST":
+        test = {
+            "model": "model",
+            "framework": "pytorch",
+            "extension": ".pth",
+            "input_type": "JSON",
+            "output_type": "JSON",
+            "uploaded_date": "2023-12-27",
+        }
+        result = current_app.db.insert_one(test)
+        if result.acknowledged:
+            return jsonify({"message": "Data successfully inserted"}), 201
+        else:
+            return jsonify({"error": "Insertion failed"}), 500
+    # else:
+    # GET 요청 처리는 아래에 작성
