@@ -14,17 +14,6 @@ def load_config():
     return base_files_dir, base_models_dir, server_info
 
 
-def load_meta_data():
-    config_file = "config.yaml"
-    if config_file:
-        with open(config_file, "r", encoding="utf-8") as f:
-            config = yaml.safe_load(f)
-
-    metadata_file = config["paths"]["metadata_file"]
-
-    return metadata_file
-
-
 def load_db_info():
     config_file = "config.yaml"
     if config_file:

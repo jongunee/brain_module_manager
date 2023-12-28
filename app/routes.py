@@ -137,28 +137,3 @@ def service():
     print(server_info)
 
     return f"Started service: {serve_file} on port {port}"
-
-
-@bp.route("/info", methods=["GET"])
-def info():
-    return server_info
-
-
-@bp.route("/write", methods=["GET", "POST"])
-def board_write():
-    if request.method == "POST":
-        test = {
-            "model": "model",
-            "framework": "pytorch",
-            "extension": ".pth",
-            "input_type": "JSON",
-            "output_type": "JSON",
-            "uploaded_date": "2023-12-27",
-        }
-        result = current_app.db.insert_one(test)
-        if result.acknowledged:
-            return jsonify({"message": "Data successfully inserted"}), 201
-        else:
-            return jsonify({"error": "Insertion failed"}), 500
-    # else:
-    # GET 요청 처리는 아래에 작성
