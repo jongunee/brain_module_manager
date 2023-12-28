@@ -1,0 +1,10 @@
+database:
+  uri: "<mongodb URI>"
+  name: "<DB Name>"
+  collection_metadata: "<Metadata Collection Name>"
+  collection_modeldata: "<Modeldata Collection Name>"
+
+paths:
+  base_models_dir: "<Bentoml Repo directory>"
+  base_files_dir: "<Model Save directory>"
+  metadata_file: "<Metadata.json directory>"
