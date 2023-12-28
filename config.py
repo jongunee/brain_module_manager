@@ -33,6 +33,7 @@ def load_db_info():
 
     db_uri = config["database"]["uri"]
     db_name = config["database"]["name"]
-    db_collection = config["database"]["collection"]
+    db_collection_metadata = config["database"]["collection_metadata"]
+    db_collection_modeldata = config["database"]["collection_modeldata"]
 
-    return db_uri, db_name, db_collection
+    return db_uri, db_name, db_collection_metadata, db_collection_modeldata

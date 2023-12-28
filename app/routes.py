@@ -20,6 +20,8 @@ def create_model():
     model_name = data.get("model_name")
     framework = data.get("framework")
     extension = data.get("extension")
+    input_type = data.get("input_type")
+    output_type = data.get("output_type")
 
     if not model_name or not extension:
         return "Model name and extension are required", 400
@@ -37,10 +39,10 @@ def create_model():
         return "File not found", 404
 
     # 모델을 로드하고 BentoML로 저장
-    bento_model_name = "bento_" + model_name
-    save_with_bento(framework, file_path, bento_model_name)
-
-    return jsonify(model_name=bento_model_name)
+    # bento_model_name = "bento_" + model_name
+    result = save_with_bento(file_path, framework, model_name, input_type, output_type)
+    print("result: ", result)
+    return jsonify(model_name=model_name)
 
 
 @bp.route("/")
@@ -50,14 +52,15 @@ def home():
 
 @bp.route("/files")
 def files():
-    saved_files = utils.read_metadata()
-    return render_template("file_list.html", saved_files=saved_files)
+    metadata = utils.read_metadata_db()
+    return render_template("file_list.html", metadata=metadata)
 
 
 @bp.route("/models")
 def models():
     # base_models_dir = r"C:\Users\whsrj\bentoml\models"
-    saved_models = utils.get_saved_models(base_models_dir)
+    # saved_models = utils.get_saved_models(base_models_dir)
+    saved_models = utils.read_modeldata_db()
     return render_template("model_list.html", saved_models=saved_models)
 
 
@@ -93,7 +96,7 @@ def upload():
     filename = secure_filename(file.filename)
     file_path = os.path.join(base_files_dir, filename)
     file.save(file_path)
-    utils.update_metadata(filename, framework, extension, input_type, output_type)
+    utils.update_metadata_db(filename, framework, extension, input_type, output_type)
 
     return f"Model file uploaded successfully with framework {framework}"
 
@@ -113,6 +116,7 @@ def service():
     config_file.write(json.dumps(config_data).encode("utf-8"))
     config_file.close()
 
+    service_directory = "./app/"
     cmd = f"bentoml serve {serve_file}:svc --host {ip} --port {port} --reload"
 
     # 서브 프로세스를 실행해서 환경변수로 전달
@@ -122,7 +126,7 @@ def service():
             json.dump(config_data, f)
         env_vars = os.environ.copy()
         env_vars["CONFIG_PATH"] = config_filepath
-        subprocess.Popen(cmd.split(), env=env_vars)
+        subprocess.Popen(cmd.split(), env=env_vars, cwd=service_directory)
 
     model_name = config_data["model_name"]
 

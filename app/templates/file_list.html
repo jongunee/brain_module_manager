@@ -56,10 +56,11 @@
           <th>Input Type</th>
           <th>Output Type</th>
           <th>Uploaded Date</th>
+          <th>ID</th>
         </tr>
       </thead>
       <tbody>
-        {% for file_info in saved_files %}
+        {% for file_info in metadata %}
         <tr>
           <td>{{ loop.index }}</td>
           <td>{{ file_info.model_name }}</td>
@@ -68,7 +69,8 @@
           <td>{{ file_info.input_type }}</td>
           <td>{{ file_info.output_type }}</td>
           <td>{{ file_info.uploaded_date }}</td>
-          <td><button class="create-model-btn" data-model-name="{{ file_info.model_name }}" data-framework="{{ file_info.framework }}" data-extension="{{ file_info.extension }}">모델 생성</button></td>
+          <td>{{ file_info._id }}</td>
+          <td><button class="create-model-btn" data-model_name="{{ file_info.model_name }}" data-framework="{{ file_info.framework }}" data-extension="{{ file_info.extension }}" data-input_type="{{ file_info.input_type }}" data-output_type="{{ file_info.output_type }}">모델 생성</button></td>
         </tr>
         {% endfor %}
       </tbody>
