@@ -5,9 +5,6 @@ import json
 
 from flask import current_app
 from datetime import datetime
-from config import load_meta_data
-
-metadata_file = load_meta_data()
 
 
 # 사용가능한 포트번호 탐색
