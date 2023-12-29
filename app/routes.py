@@ -93,10 +93,17 @@ def upload():
     if not output_type:
         return "Output type not selected", 400
 
+    api_data = request.form.get("api_data")
+    if not api_data:
+        return "api data not entered", 400
+
     filename = secure_filename(file.filename)
     file_path = os.path.join(base_files_dir, filename)
     file.save(file_path)
-    utils.update_metadata_db(filename, framework, extension, input_type, output_type)
+    print("file name:", filename)
+    utils.update_metadata_db(
+        filename, framework, extension, input_type, output_type, api_data
+    )
 
     return f"Model file uploaded successfully with framework {framework}"
 

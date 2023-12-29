@@ -10,8 +10,8 @@
     <a href="{{url_for('main.models')}}">Saved Model List</a>
     <a href="{{url_for('main.servers')}}">Activated Server List</a>
     <p>Supported Framework: Scikit-learn, Keras, Pytorch, Tensorflow</p>
-    <p>Save Models</p>
-    <select class="file-framework" id="file_framework" name="file_framework" required>
+    <h3>Save Models</h3>
+    <select class="file-framework" id="file-framework" name="file_framework" required>
       <option value="" disabled selected>Framework</option>
       <option value="sklearn">Scikit-learn</option>
       <option value="keras">Keras</option>
@@ -26,14 +26,14 @@
       <option value=".pt">.pt</option>
       <option value=".pth">.pth</option>
     </select>
-    <select class="input-type" id="input_type" name="input_type" required>
+    <select class="input-type" id="input-type" name="input_type" required>
       <option value="" disabled selected>Input type</option>
       <option value="NumpyNdarray">NumpyNdarray</option>
       <option value="PandasDataFrame">PandasDataFrame</option>
       <option value="PandasSeries">PandasSeries</option>
       <option value="JSON">JSON</option>
     </select>
-    <select class="output-type" id="output_type" name="output_type" required>
+    <select class="output-type" id="output-type" name="output_type" required>
       <option value="" disabled selected>Output type</option>
       <option value="NumpyNdarray">NumpyNdarray</option>
       <option value="PandasDataFrame">PandasDataFrame</option>
@@ -42,10 +42,26 @@
     </select>
     <form id="upload-form" enctype="multipart/form-data">
       <input type="file" name="file" required>
+      <h3>API Definition</h3>
+      <div>
+        <select class="api-type" id="api-type" name="api_type" required>
+          <option value="" disabled selected>Type</option>
+          <option value="List">List</option>
+          <option value="Dict">Dict</option>
+          <option value="str">str</option>
+          <option value="bool">bool</option>
+          <option value="int">int</option>
+          <option value="float">float</option>
+          <option value="None">None</option>
+        </select>
+        <input type='text' id='api-key' placeholder="key"/>
+        <input type='text' id='api-value' placeholder="example value"/>
+        <input type='button' value='+' onclick='addApi()' />
+      </div>
+      <ul id='api-inputs'></ul>
       <button type="submit" id="upload-btn">Save</button>
     </form>
     <div id="message"></div>
-
     <table>
       <thead>
         <tr>
@@ -77,5 +93,6 @@
     </table>
     <script type=text/javascript src="{{ url_for('static', filename='js/save_file.js') }}"></script>
     <script type=text/javascript src="{{ url_for('static', filename='js/create_model.js') }}"></script>
+    <script type=text/javascript src="{{ url_for('static', filename='js/define_api.js') }}"></script>
   </body>
 </html>

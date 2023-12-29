@@ -18,7 +18,9 @@ def find_available_port(start_port, end_port):
 
 
 # db에 메타 정보 저장 및 업데이트
-def update_metadata_db(filename, framework, extension, input_type, output_type):
+def update_metadata_db(
+    filename, framework, extension, input_type, output_type, api_data
+):
     model_name = filename.rsplit(".", 1)[0]  # 파일 확장자를 제거하여 모델명을 얻음
     current_date = datetime.now().strftime("%Y-%m-%d")
     metadata = {
@@ -28,6 +30,7 @@ def update_metadata_db(filename, framework, extension, input_type, output_type):
         "input_type": input_type,
         "output_type": output_type,
         "uploaded_date": current_date,
+        "api_data": api_data,
     }
     result = current_app.db_metadata.insert_one(metadata)
     print("result: ", result.inserted_id)
