@@ -45,13 +45,14 @@ def read_metadata_db():
 
 
 # db에 모델 정보 저장 및 업데이트
-def update_modeldata_db(model_name, framework, input_type, output_type, tag):
+def update_modeldata_db(model_name, framework, input_type, output_type, tag, api_data):
     modeldata = {
         "model_name": model_name,
         "tag": tag,
         "framework": framework,
         "input_type": input_type,
         "output_type": output_type,
+        "api_data": api_data,
     }
     result = current_app.db_modeldata.insert_one(modeldata)
     print("result: ", result.inserted_id)

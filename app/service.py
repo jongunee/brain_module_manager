@@ -1,10 +1,12 @@
 import bentoml
 from bentoml.io import NumpyNdarray, PandasDataFrame, PandasSeries, JSON
+from pydantic import BaseModel, create_model
 
 import pandas as pd
 import numpy as np
 import os
 import json
+import ast
 
 from tensorflow.python.keras.models import load_model
 import tensorflow as tf
@@ -26,7 +28,38 @@ framework = config["framework"]
 model_name = config["model_name"]
 input_type = config["input_type"]
 output_type = config["output_type"]
+api_data = config["api_data"]
 service_name = model_name.split(":")[0]
+
+# print("***api_data: ", api_data)
+# JSON 데이터를 파이썬 딕셔너리로 파싱
+# data_dict = json.loads(api_data)
+
+def parse_value(value, type_str):
+    if type_str == 'int':
+        return int(value)
+    elif type_str == 'float':
+        return float(value)
+    elif type_str == 'bool':
+        return value.lower() == 'true'
+    else:
+        return value
+
+api_data = json.loads(api_data.replace("'", "\""))
+print("***converted api_data: ", api_data)
+
+
+fields = {}
+for key, value in api_data.items():
+    field_name, field_type_str = key.split(':')
+    fields[field_name] = (eval(field_type_str), parse_value(value, field_type_str))
+
+DynamicModel = create_model('DynamicModel', **fields)
+model_instance = DynamicModel()
+
+input_spec = JSON.from_sample(model_instance)
+
+print("**input_spec: ", input_spec)
 
 # Input 컴포넌트 생성성
 if input_type == "NumpyNdarray":
@@ -36,7 +69,7 @@ elif input_type == "PandasDataFrame":
 elif input_type == "PandasSeries":
     input_adapter = PandasSeries()
 elif input_type == "JSON":
-    input_adapter = JSON()
+    input_adapter = input_spec
 else:
     raise NotImplementedError(f"Unsupported input type: '{input_type}'")
 

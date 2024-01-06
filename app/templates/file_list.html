@@ -72,7 +72,7 @@
           <th>Input Type</th>
           <th>Output Type</th>
           <th>Uploaded Date</th>
-          <th>ID</th>
+          <!-- <th>ID</th> -->
         </tr>
       </thead>
       <tbody>
@@ -85,8 +85,10 @@
           <td>{{ file_info.input_type }}</td>
           <td>{{ file_info.output_type }}</td>
           <td>{{ file_info.uploaded_date }}</td>
-          <td>{{ file_info._id }}</td>
-          <td><button class="create-model-btn" data-model_name="{{ file_info.model_name }}" data-framework="{{ file_info.framework }}" data-extension="{{ file_info.extension }}" data-input_type="{{ file_info.input_type }}" data-output_type="{{ file_info.output_type }}">모델 생성</button></td>
+          <!-- <td>{{ file_info._id }}</td> -->
+          <td><span class="hidden" data-id="{{ file_info._id }}"></span></td>
+          <td><span class="hidden" data-api_data="{{ file_info.api_data }}"></span></td>
+          <td><button class="create-model-btn" data-model_name="{{ file_info.model_name }}" data-framework="{{ file_info.framework }}" data-extension="{{ file_info.extension }}" data-input_type="{{ file_info.input_type }}" data-output_type="{{ file_info.output_type }}" data-api_data="{{ file_info.api_data }}">모델 생성</button></td>
         </tr>
         {% endfor %}
       </tbody>

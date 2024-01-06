@@ -8,7 +8,7 @@ import tensorflow as tf
 from . import utils
 
 
-def save_with_bento(file_path, framework, model_name, input_type, output_type):
+def save_with_bento(file_path, framework, model_name, input_type, output_type, api_data):
     root, extension = os.path.splitext(file_path)
     print(extension)
     result = None
@@ -32,5 +32,5 @@ def save_with_bento(file_path, framework, model_name, input_type, output_type):
         return "Unsupported framework: {}".format(framework)
     if result:
         tag = str(result.tag).split(":")[1]
-        utils.update_modeldata_db(model_name, framework, input_type, output_type, tag)
+        utils.update_modeldata_db(model_name, framework, input_type, output_type, tag, api_data)
         return result

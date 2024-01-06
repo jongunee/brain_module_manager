@@ -1,11 +1,12 @@
 $(document).ready(function () {
   // 동적으로 생성된 요소에도 이벤트 핸들러를 적용
   $(document).on("click", ".create-model-btn", function () {
-    var model_name = $(this).data("model-name");
+    var model_name = $(this).data("model_name");
     var framework = $(this).data("framework");
     var extension = $(this).data("extension");
-    var input_type = $(this).data("input-type");
-    var output_type = $(this).data("output-type");
+    var input_type = $(this).data("input_type");
+    var output_type = $(this).data("output_type");
+    var api_data = $(this).data("api_data");
     $.ajax({
       url: "/create",
       type: "POST",
@@ -16,6 +17,7 @@ $(document).ready(function () {
         extension: extension,
         input_type: input_type,
         output_type: output_type,
+        api_data: api_data,
       }),
       success: function (response) {
         alert("모델 생성 성공: " + response.model_name);

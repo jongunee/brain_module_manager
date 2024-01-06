@@ -8,6 +8,7 @@ $(document).ready(function () {
       model_name: $(this).closest("tr").find(".model-name").val(),
       input_type: $(this).closest("tr").find(".input-type").val(),
       output_type: $(this).closest("tr").find(".output-type").val(),
+      api_data: $(this).closest("tr").find(".api-data").val(),
     };
 
     console.log("Sending config_data:", config);

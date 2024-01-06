@@ -22,6 +22,7 @@ def create_model():
     extension = data.get("extension")
     input_type = data.get("input_type")
     output_type = data.get("output_type")
+    api_data = data.get("api_data")
 
     if not model_name or not extension:
         return "Model name and extension are required", 400
@@ -40,7 +41,7 @@ def create_model():
 
     # 모델을 로드하고 BentoML로 저장
     # bento_model_name = "bento_" + model_name
-    result = save_with_bento(file_path, framework, model_name, input_type, output_type)
+    result = save_with_bento(file_path, framework, model_name, input_type, output_type, api_data)
     print("result: ", result)
     return jsonify(model_name=model_name)
 
@@ -116,7 +117,7 @@ def service():
 
     # body에 포함된 데이터를 'config_data'로 받기
     config_data = request.json
-    # print("Received config_data:", config_data)
+    print("Received config_data:", config_data)
 
     # 임시 파일 생성
     config_file = tempfile.NamedTemporaryFile(delete=False)
