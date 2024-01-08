@@ -24,7 +24,11 @@
         <td>{{ server_config.config_data.framework }}</td>
         <td>{{ server_config.config_data.input_type }}</td>
         <td>{{ server_config.config_data.output_type }}</td>
-        <td>http://{{ server_config.ip }}:{{ server_config.port }}</td>
+        <td>
+          <a href="http://{{ server_config.ip }}:{{ server_config.port }}"
+            >http://{{ server_config.ip }}:{{ server_config.port }}</a
+          >
+        </td>
       </tr>
       {% endfor %}
     </table>
