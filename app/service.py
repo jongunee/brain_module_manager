@@ -35,31 +35,37 @@ service_name = model_name.split(":")[0]
 # JSON 데이터를 파이썬 딕셔너리로 파싱
 # data_dict = json.loads(api_data)
 
+
 def parse_value(value, type_str):
-    if type_str == 'int':
+    if type_str == "int":
         return int(value)
-    elif type_str == 'float':
+    elif type_str == "float":
         return float(value)
-    elif type_str == 'bool':
-        return value.lower() == 'true'
+    elif type_str == "bool":
+        return value.lower() == "true"
     else:
         return value
 
-api_data = json.loads(api_data.replace("'", "\""))
-print("***converted api_data: ", api_data)
+
+api_data = json.loads(api_data.replace("'", '"'))
+# print("***converted api_data: ", api_data)
 
 
 fields = {}
 for key, value in api_data.items():
-    field_name, field_type_str = key.split(':')
+    field_name, field_type_str = key.split(":")
     fields[field_name] = (eval(field_type_str), parse_value(value, field_type_str))
 
-DynamicModel = create_model('DynamicModel', **fields)
+# print("fields: ", fields)
+
+DynamicModel = create_model("DynamicModel", **fields)
+# print("DynamicModel", DynamicModel)
 model_instance = DynamicModel()
+# print("model_instance", model_instance)
 
 input_spec = JSON.from_sample(model_instance)
 
-print("**input_spec: ", input_spec)
+# print("**input_spec: ", input_spec)
 
 # Input 컴포넌트 생성성
 if input_type == "NumpyNdarray":
@@ -107,13 +113,15 @@ def predict(input_data):
     try:
         # 1. 입력 데이터 프레임 생성
         input_df = create_input_dataframe(input_data, input_type)
+        print("input_df: ", input_df)
 
         # 2. Framework에 따라 모델 실행
         result = execute_model(input_df, framework, model_runner)
+        print("result: ", result)
 
         # 3. 결과를 설정한 output type으로 변환
-        output_data = convert_to_output_type(result, input_type)
-
+        output_data = convert_to_output_type(result, output_type)
+        print("output_data: ", output_data)
         # 성공적인 응답
         if output_type == "JSON":
             response = {
@@ -138,8 +146,10 @@ def predict(input_data):
 
 
 def create_input_dataframe(input_data, input_type_str):
-    if input_type == "JSON" or input_type == "PandasSeries":
-        return pd.DataFrame([input_data])
+    if input_type_str == "JSON" or input_type_str == "PandasSeries":
+        # Pydantic 모델 인스턴스를 딕셔너리로 변환
+        data_dict = model_instance.model_dump()
+        return pd.DataFrame([data_dict])
     else:
         return input_data
 
