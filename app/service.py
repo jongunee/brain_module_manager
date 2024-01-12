@@ -58,24 +58,24 @@ for key, value in api_data.items():
 
 # print("fields: ", fields)
 
-DynamicModel = create_model("DynamicModel", **fields)
+ApiDynamicModel = create_model("ApiDynamicModel", **fields)
 # print("DynamicModel", DynamicModel)
-model_instance = DynamicModel()
+api_model_instance = ApiDynamicModel()
 # print("model_instance", model_instance)
 
-input_spec = JSON.from_sample(model_instance)
+# input_spec = JSON.from_sample(model_instance)
 
 # print("**input_spec: ", input_spec)
 
 # Input 컴포넌트 생성성
 if input_type == "NumpyNdarray":
-    input_adapter = NumpyNdarray()
+    input_adapter = NumpyNdarray.from_sample(api_model_instance)
 elif input_type == "PandasDataFrame":
-    input_adapter = PandasDataFrame()
+    input_adapter = PandasDataFrame.from_sample(api_model_instance)
 elif input_type == "PandasSeries":
-    input_adapter = PandasSeries()
+    input_adapter = PandasSeries.from_sample(api_model_instance)
 elif input_type == "JSON":
-    input_adapter = input_spec
+    input_adapter = JSON.from_sample(api_model_instance)
 else:
     raise NotImplementedError(f"Unsupported input type: '{input_type}'")
 
@@ -146,9 +146,10 @@ def predict(input_data):
 
 
 def create_input_dataframe(input_data, input_type_str):
+    print(input_type_str)
     if input_type_str == "JSON" or input_type_str == "PandasSeries":
         # Pydantic 모델 인스턴스를 딕셔너리로 변환
-        data_dict = model_instance.model_dump()
+        data_dict = input_data.model_dump()
         return pd.DataFrame([data_dict])
     else:
         return input_data
