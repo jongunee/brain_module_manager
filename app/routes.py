@@ -8,6 +8,9 @@ import tempfile
 import zipfile
 import subprocess
 import json
+import bentoml
+import yaml
+import docker
 
 bp = Blueprint("main", __name__)
 
@@ -41,7 +44,9 @@ def create_model():
 
     # 모델을 로드하고 BentoML로 저장
     # bento_model_name = "bento_" + model_name
-    result = save_with_bento(file_path, framework, model_name, input_type, output_type, api_data)
+    result = save_with_bento(
+        file_path, framework, model_name, input_type, output_type, api_data
+    )
     print("result: ", result)
     return jsonify(model_name=model_name)
 
@@ -117,7 +122,7 @@ def service():
 
     # body에 포함된 데이터를 'config_data'로 받기
     config_data = request.json
-    print("Received config_data:", config_data)
+    # print("Received config_data:", config_data)
 
     # 임시 파일 생성
     config_file = tempfile.NamedTemporaryFile(delete=False)
@@ -142,6 +147,54 @@ def service():
         server_info[model_name] = []
 
     server_info[model_name].append({"config_data": config_data, "ip": ip, "port": port})
-    print(server_info)
+    # print(server_info)
 
     return f"Started service: {serve_file} on port {port}"
+
+
+@bp.route("/images", methods=["GET", "POST"])
+def images():
+    if request.method == "GET":
+        client = docker.from_env()
+        saved_images = []
+        for image in client.images.list():
+            saved_images.append(image.tags)
+        return render_template("image_list.html", saved_images=saved_images)
+
+    elif request.method == "POST":
+        config_data = request.json
+        if config_data["framework"] == "sklearn":
+            model_package = "scikit-learn"
+        elif config_data["framework"] == "keras":
+            model_package = "keras"
+        elif config_data["framework"] == "pytorch":
+            model_package = "torch"
+        elif config_data["framework"] == "tensorflow":
+            model_package = "tensorflow"
+        service_name = config_data["model_name"].split(":")[0]
+
+        print("****config_data: ", config_data)
+        # config_data["api_data"] = json.dumps(config_data["api_data"])
+        # print("****config_data: ", config_data)
+
+        with open("model_config.yaml", "w") as f:
+            yaml.dump(config_data, f)
+        bentoml.bentos.build(
+            service="service_for_docker.py:svc",
+            # version="0.6",  # override default version generator
+            # description=open("README.md").read(),
+            include=["service_for_docker.py", "model_config.yaml"],
+            exclude=[],  # files to exclude can also be specified with a .bentoignore file
+            python=dict(
+                packages=["pandas", "numpy", "pydantic", model_package],
+            ),
+            docker=dict(
+                distro="debian",
+                python_version="3.10",
+            ),
+        )
+        bento_name = service_name + ":latest"
+        print("bento_name: ", bento_name)
+
+        bentoml.container.build(bento_name)
+        return f"image created"

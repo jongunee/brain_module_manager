@@ -4,3 +4,4 @@ models/
 metadata.json
 .idea/
 .vscode/
+model_config.yaml

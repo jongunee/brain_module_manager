@@ -7,33 +7,21 @@ import numpy as np
 import os
 import json
 import ast
+import yaml
 
-from tensorflow.python.keras.models import load_model
-import tensorflow as tf
-import torch
 
-# GPU 경고 무시
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
-tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
+def load_env_variables():
+    with open("model_config.yaml") as f:
+        config = yaml.full_load(f)
 
-# config 파일 로드
-config_filepath = os.environ.get("CONFIG_PATH")
+    framework = config["framework"]
+    model_name = config["model_name"]
+    input_type = config["input_type"]
+    output_type = config["output_type"]
+    api_data = config["api_data"]
+    service_name = model_name.split(":")[0]
 
-if config_filepath:
-    with open(config_filepath, "r") as f:
-        config = json.load(f)
-
-# config 설정 로드
-framework = config["framework"]
-model_name = config["model_name"]
-input_type = config["input_type"]
-output_type = config["output_type"]
-api_data = config["api_data"]
-service_name = model_name.split(":")[0]
-
-# print("***api_data: ", api_data)
-# JSON 데이터를 파이썬 딕셔너리로 파싱
-# data_dict = json.loads(api_data)
+    return framework, model_name, input_type, output_type, api_data, service_name
 
 
 def parse_value(value, type_str):
@@ -46,6 +34,74 @@ def parse_value(value, type_str):
     else:
         return value
 
+
+# 입력 데이터 프레임 생성 함수
+def create_input_dataframe(input_data, input_type_str):
+    # print(input_type_str)
+    if input_type_str == "JSON":
+        # Pydantic 모델 인스턴스를 딕셔너리로 변환
+        data_dict = input_data.model_dump()
+        return pd.DataFrame([data_dict])
+    elif input_type_str == "PandasSeries":
+        return input_data.values.reshape(1, -1)
+    else:
+        return input_data
+
+
+# Framework에 따른 모델 실행 함수
+def execute_model(input_df, framework, model_runner):
+    if framework == "sklearn":
+        return model_runner.predict.run(input_df)
+    elif framework == "keras":
+        return model_runner.predict(input_df)
+    elif framework == "pytorch":
+        input_tensor = torch.from_numpy(input_df.to_numpy())
+        with torch.no_grad():
+            return model_runner(input_tensor).numpy()
+    elif framework == "tensorflow":
+        return model_runner(input_df.to_numpy()).numpy()
+    else:
+        raise NotImplementedError(f"Unsupported framework: '{framework}'")
+
+
+# 결과를 설정한 output type으로 변환하는 함수
+def convert_to_output_type(result, output_type):
+    if output_type == "PandasDataFrame":
+        if not isinstance(result, pd.DataFrame):
+            return pd.DataFrame(result)
+        return result
+    elif output_type == "PandasSeries":
+        if not isinstance(result, pd.Series):
+            return pd.Series(result)
+        return result
+    elif output_type == "NumpyNdarray":
+        if isinstance(result, pd.DataFrame):
+            return result.to_numpy()
+        elif isinstance(result, pd.Series):
+            return result.to_numpy()
+    return result
+
+
+# GPU 경고 무시
+# os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
+# tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
+
+
+(
+    framework,
+    model_name,
+    input_type,
+    output_type,
+    api_data,
+    service_name,
+) = load_env_variables()
+
+if framework == "keras":
+    import tensorflow as tf
+elif framework == "pytorch":
+    import torch
+elif framework == "tensorflow":
+    import tensorflow as tf
 
 api_data = json.loads(api_data.replace("'", '"'))
 # print("***converted api_data: ", api_data)
@@ -71,7 +127,7 @@ for key, value in api_data.items():
 
     # Pandas Series에 값 추가
     pd_series_sample[field_name] = parsed_value
-    print("pd_series_sample: ", pd_series_sample)
+    # print("pd_series_sample: ", pd_series_sample)
 
 
 ApiDynamicModel = create_model("ApiDynamicModel", **fields)
@@ -81,6 +137,7 @@ api_model_instance = ApiDynamicModel()
 # input_spec = JSON.from_sample(model_instance)
 
 # print("**input_spec: ", input_spec)
+
 
 # Input 컴포넌트 생성성
 if input_type == "NumpyNdarray":
@@ -120,9 +177,8 @@ else:
 # BentoML service 생성
 svc = bentoml.Service(service_name, runners=[model_runner])
 
+
 # API 정의
-
-
 @svc.api(input=input_adapter, output=output_adapter)
 def predict(input_data):
     try:
@@ -155,59 +211,3 @@ def predict(input_data):
             response = output_data
 
     return response
-
-
-# 입력 데이터 프레임 생성 함수
-
-
-def create_input_dataframe(input_data, input_type_str):
-    # print(input_type_str)
-    if input_type_str == "JSON":
-        # Pydantic 모델 인스턴스를 딕셔너리로 변환
-        data_dict = input_data.model_dump()
-        return pd.DataFrame([data_dict])
-    elif input_type_str == "PandasSeries":
-        return input_data.values.reshape(1, -1)
-    else:
-        return input_data
-
-
-# Framework에 따른 모델 실행 함수
-
-
-def execute_model(input_df, framework, model_runner):
-    if framework == "sklearn":
-        return model_runner.predict.run(input_df)
-    elif framework == "keras":
-        return model_runner.predict(input_df)
-    elif framework == "pytorch":
-        input_tensor = torch.from_numpy(input_df.to_numpy())
-        with torch.no_grad():
-            return model_runner(input_tensor).numpy()
-    elif framework == "tensorflow":
-        return model_runner(input_df.to_numpy()).numpy()
-    else:
-        raise NotImplementedError(f"Unsupported framework: '{framework}'")
-
-
-# 결과를 설정한 output type으로 변환하는 함수
-def convert_to_output_type(result, output_type):
-    if output_type == "PandasDataFrame":
-        if not isinstance(result, pd.DataFrame):
-            return pd.DataFrame(result)
-        return result
-    elif output_type == "PandasSeries":
-        if not isinstance(result, pd.Series):
-            return pd.Series(result)
-        return result
-    elif output_type == "NumpyNdarray":
-        if isinstance(result, pd.DataFrame):
-            return result.to_numpy()
-        elif isinstance(result, pd.Series):
-            return result.to_numpy()
-    return result
-
-
-# service 실행
-if __name__ == "__main__":
-    svc.run()

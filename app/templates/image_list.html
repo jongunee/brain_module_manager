@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Docker Image List</title>
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+  </head>
+  <body>
+    <h1>Saved Model List</h1>
+    <a href="{{url_for('main.files')}}">Saved Model File List</a>
+    <a href="{{url_for('main.models')}}">Saved Model List</a>
+    <a href="{{url_for('main.servers')}}">Activated Server List</a>
+    <a href="{{url_for('main.images')}}">Docker Image List</a>
+    <p>Supported types</p>
+    <ul>
+      <li>Framework: Scikit-learn, Keras, Pytorch, Tensorflow</li>
+      <li>Input: NumpyNdarray, PandasDataFrame, PandasSeries, JSON</li>
+      <li>Output: NumpyNdarray, PandasDataFrame, PandasSeries, JSON</li>
+    </ul>
+    <table>
+      <thead>
+        <tr>
+          <th>No.</th>
+          <th>Image Name</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for image in saved_images %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td>{{ image }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </body>
+</html>

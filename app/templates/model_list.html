@@ -9,6 +9,7 @@
     <a href="{{url_for('main.files')}}">Saved Model File List</a>
     <a href="{{url_for('main.models')}}">Saved Model List</a>
     <a href="{{url_for('main.servers')}}">Activated Server List</a>
+    <a href="{{url_for('main.images')}}">Docker Image List</a>
     <p>Supported types</p>
     <ul>
       <li>Framework: Scikit-learn, Keras, Pytorch, Tensorflow</li>
@@ -43,11 +44,13 @@
           <input type="hidden" name="api_data" class="api-data" value="{{ model_info.api_data }}" />
           <td>
             <button type="button" class="run-button">Run</button>
+            <button type="button" class="image-button">Create Image</button>
           </td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
     <script type=text/javascript src="{{ url_for('static', filename='js/serve_model.js') }}"></script>
+    <script type=text/javascript src="{{ url_for('static', filename='js/create_image.js') }}"></script>
   </body>
 </html>
