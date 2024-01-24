@@ -59,7 +59,7 @@ def home():
 @bp.route("/files")
 def files():
     metadata = utils.read_metadata_db()
-    return render_template("file_list.html", metadata=metadata)
+    666666
 
 
 @bp.route("/models")
@@ -158,7 +158,7 @@ def images():
         client = docker.from_env()
         saved_images = []
         for image in client.images.list():
-            saved_images.append(image.tags)
+            saved_images.append(image.tags[0])
         return render_template("image_list.html", saved_images=saved_images)
 
     elif request.method == "POST":
