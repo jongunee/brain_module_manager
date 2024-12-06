@@ -6,7 +6,6 @@ import pandas as pd
 import numpy as np
 import os
 import json
-import ast
 
 from tensorflow.python.keras.models import load_model
 import tensorflow as tf
@@ -71,7 +70,7 @@ for key, value in api_data.items():
 
     # Pandas Series에 값 추가
     pd_series_sample[field_name] = parsed_value
-    print("pd_series_sample: ", pd_series_sample)
+    # print("pd_series_sample: ", pd_series_sample)
 
 
 ApiDynamicModel = create_model("ApiDynamicModel", **fields)

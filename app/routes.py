@@ -3,6 +3,7 @@ from werkzeug.utils import secure_filename
 from config import load_config
 from .bentoize import save_with_bento
 from . import utils
+from bson.json_util import dumps
 import os
 import tempfile
 import zipfile
@@ -59,7 +60,7 @@ def home():
 @bp.route("/files")
 def files():
     metadata = utils.read_metadata_db()
-    666666
+    return render_template("file_list.html", metadata=metadata)
 
 
 @bp.route("/models")
@@ -198,3 +199,27 @@ def images():
 
         bentoml.container.build(bento_name)
         return f"image created"
+
+
+# 프론트엔드 API
+@bp.route("/api/files")
+def apiFiles():
+    metadata = utils.read_metadata_db()
+    metadata_list = list(metadata)
+    return jsonify(dumps(metadata_list))
+
+
+@bp.route("/api/models")
+def apiModels():
+    modeldata = utils.read_modeldata_db()
+    modeldata_list = list(modeldata)
+    return jsonify(dumps(modeldata_list))
+
+
+@bp.route("/api/images")
+def apiImages():
+    client = docker.from_env()
+    image_list = []
+    for image in client.images.list():
+        image_list.append(image.tags[0])
+    return jsonify(image_list)
